@@ -23,3 +23,12 @@ https://medium.com/expedia-group-tech/the-weird-world-of-grpc-tooling-for-node-j
 
 https://github.com/grpc/grpc-node
 
+
+
+```shell
+protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src \
+    --proto_path ../treactor-proto \
+    --experimental_allow_proto3_optional \
+    io/treactor/v1alpha/atom.proto \
+    io/treactor/v1alpha/node.proto
+```

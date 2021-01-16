@@ -1,0 +1,33 @@
+.Atom {
+    width: 60px;
+    height: 65px;
+    border: 2px solid #282c34;
+    position: relative;
+}
+
+.element {
+    font-size: 10pt;
+    text-align: left;
+    position: absolute;
+    top: 9px;
+    left: 12px;
+    margin: -9px;
+}
+
+.symbol {
+    font-size: 18pt;
+    font-weight: bolder;
+    position: absolute;
+    top: 15pt;
+    left: 0;
+    right: 0;
+}
+
+.name {
+    font-size: 7pt;
+    position: absolute;
+    bottom: 0pt;
+    left: 0;
+    right: 0;
+    margin-top: -7px;
+}
