@@ -15,7 +15,7 @@ class Periodic extends Component {
                 ((row >= 2) && (i <= 2)) ||
                 ((row >= 4) && (i <= 3))
             ) {
-                children.push(<td><Atom element={element++}/></td>)
+                children.push(<td><Atom element={element++} healthInterval={0}/></td>)
             } else {
                 children.push(<td></td>)
             }
@@ -28,7 +28,7 @@ class Periodic extends Component {
                 ((row >= 2) && (i >= 13)) ||
                 ((row >= 4) && (i >= 4))
             ) {
-                children.push(<td><Atom element={element++}/></td>)
+                children.push(<td><Atom element={element++} healthInterval={0}/></td>)
             } else {
                 children.push(<td></td>)
             }
@@ -44,7 +44,7 @@ class Periodic extends Component {
         children.push(<td></td>)
         let element = Periodic.ari1[row - 1]
         for (let i = 4; i <= 17; i++) {
-            children.push(<td><Atom element={element++}/></td>)
+            children.push(<td><Atom element={element++} healthInterval={0}/></td>)
         }
         children.push(<td></td>)
         return children
@@ -65,7 +65,9 @@ class Periodic extends Component {
     render() {
         return (
             <table>
+                <tbody>
                 {this.table()}
+                </tbody>
             </table>
         )
     }

@@ -1,34 +1,33 @@
 import opentelemetry from "@opentelemetry/api"
-import NodeTracerProvider from "@opentelemetry/node"
-import SimpleSpanProcessor from "@opentelemetry/tracing"
-const { OtlpExporter } = require('@opentelemetry/exporter-otlp');
+import {NodeTracerProvider} from "@opentelemetry/node"
+import {SimpleSpanProcessor} from "@opentelemetry/tracing"
+import {Config} from "./config";
+import {CollectorTraceExporter} from '@opentelemetry/exporter-collector-grpc';
 
-const EXPORTER = process.env.EXPORTER || '';
-
-module.exports = (serviceName:string) => {
-    // @ts-ignore
-    const provider = new NodeTracerProvider({
+const provider = new NodeTracerProvider(
+    {
         plugins: {
-            express: {
-                enabled: true,
-                path: '@opentelemetry/plugin-express',
-            },
+            // express: {
+            //     enabled: true,
+            //     path: '@opentelemetry/plugin-express',
+            // },
             http: {
                 enabled: true,
                 path: '@opentelemetry/plugin-http',
             },
-        },
-    });
+        }
+    }
+);
 
-    let exporter = new OtlpExporter({
-            serviceName,
-        });
-
-    // @ts-ignore
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-
-    // Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
-    provider.register();
-
-    return opentelemetry.trace.getTracer('express-example');
+const collectorOptions = {
+    serviceName: Config.SERVICE_NAME,
+    serviceVersion: Config.SERVICE_VERSION,
+    url: Config.OTEL_EXPORTER_OTLP_ENDPOINT
 };
+const exporter = new CollectorTraceExporter(collectorOptions);
+
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+// Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
+provider.register();
+
+export default opentelemetry.trace.getTracer('treactor-node');

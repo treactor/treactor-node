@@ -25,6 +25,9 @@ https://github.com/grpc/grpc-node
 
 
 
+go get google.golang.org/protobuf/cmd/protoc-gen-go \
+    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
 ```shell
 protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src \
     --proto_path ../treactor-proto \
@@ -32,3 +35,16 @@ protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src \
     io/treactor/v1alpha/atom.proto \
     io/treactor/v1alpha/node.proto
 ```
+
+
+
+
+https://materialdesignicons.com/
+https://github.com/TeamWertarbyte/mdi-material-ui
+
+
+https://material-ui.com/api/svg-icon/
+
+
+
+https://github.com/chenckang/react-json-pretty#readme

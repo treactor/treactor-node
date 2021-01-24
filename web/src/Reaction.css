@@ -1,0 +1,37 @@
+.reactor {
+    margin: 10pt 0pt 0pt;
+    padding: 8pt;
+    width: 100%;
+}
+
+
+#reactor-control {
+    align-items: flex-start;
+}
+
+#molecule {
+    /*width: 600px;*/
+}
+
+#reaction {
+    /*vertical-align: bottom;*/
+    /*margin-left: 8px;*/
+    /*margin-bottom: 8px;*/
+}
+
+#mode {
+}
+
+.MuiInputBase-root {
+    /*vertical-align: bottom;*/
+}
+
+#result {
+    font-size: 10pt;
+    vertical-align: text-top;
+    width: 100%;
+    /*width: 60px;*/
+    /*height: 65px;*/
+    /*border: 1px solid #282c34;*/
+    /*position: relative;*/
+}

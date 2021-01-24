@@ -1,7 +1,7 @@
 .Atom {
     width: 60px;
     height: 65px;
-    border: 2px solid #282c34;
+    border: 1px solid #282c34;
     position: relative;
 }
 
@@ -18,9 +18,8 @@
     font-size: 18pt;
     font-weight: bolder;
     position: absolute;
-    top: 15pt;
-    left: 0;
-    right: 0;
+    top: 18pt;
+    left: 5pt;
 }
 
 .name {
@@ -30,4 +29,33 @@
     left: 0;
     right: 0;
     margin-top: -7px;
+    text-align: center;
+}
+
+.icon-language {
+    position: absolute;
+    font-size: 13pt;
+    top: 10px;
+    right: 9px;
+    margin: -9px;
+}
+
+.icon-atom {
+    position: absolute;
+    font-size: 13pt;
+    top: 27px;
+    right: 9px;
+    margin: -9px;
+}
+
+.atom-check {
+    color: darkblue;
+}
+
+.atom-ready {
+    color: black;
+}
+
+.atom-error {
+    color: darkred;
 }
