@@ -89,7 +89,7 @@ function extractHeadersFromResponse(res: AxiosResponse): { [k: string]: any } {
     return headers;
 }
 
-app.get('/treact/atom/:atom', function (req, res) {
+app.get('/treact/atom/:atom',  function (req, res) {
     let atom = elements.bySumbol(req.params["atom"])
     if (undefined === atom) {
         return;
