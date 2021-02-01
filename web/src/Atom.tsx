@@ -7,6 +7,7 @@ import LanguageGo from 'mdi-material-ui/LanguageGo'
 import GoogleChrome from 'mdi-material-ui/GoogleChrome'
 
 type AtomProps = {
+    enabled: boolean
     element: number
     healthInterval: number
 }
@@ -31,7 +32,10 @@ type AtomResult = {
 }
 
 class Atom extends Component<AtomProps, AtomState> {
+    private apiUrl: string
+
     private timerHandler: number = 0;
+
     constructor(props: AtomProps) {
         super(props)
         this.state = {
@@ -40,6 +44,8 @@ class Atom extends Component<AtomProps, AtomState> {
             backoff: 0,
             healthChecking: false,
         };
+        // @ts-ignore
+        this.apiUrl = document.querySelectorAll('[name="treactor-api-url"]')[0].content
     }
 
     //timerHandler:TimerHandler = null
@@ -48,14 +54,16 @@ class Atom extends Component<AtomProps, AtomState> {
         if (this.timerHandler !== 0) {
             clearTimeout(this.timerHandler)
         }
-        // @ts-ignore
-        this.timerHandler = setTimeout(() => this.getData(),30000 + Math.random() * 30000)
+        if (this.props.enabled) {
+            // @ts-ignore
+            this.timerHandler = setTimeout(() => this.getData(), 30000 + Math.random() * 30000)
+        }
     }
 
 
     handleError(res: Response): Response {
         this.refreshTime()
-        if(!res.ok) {
+        if (!res.ok) {
             this.setState({
                 error: res,
                 healthChecking: false
@@ -70,7 +78,11 @@ class Atom extends Component<AtomProps, AtomState> {
             healthChecking: true,
             error: null
         })
-        fetch("/treact/about/" + this.props.element)
+        fetch(this.apiUrl + "/treact/about/" + this.props.element, {
+            headers: {
+                'Accept': 'application/json',
+            }
+        })
             .then(res => this.handleError(res))
             .then(res => res.json() as Promise<AboutResult>)
             .then((result) => {
@@ -109,23 +121,36 @@ class Atom extends Component<AtomProps, AtomState> {
         }
     }
 
-    atomCheck() {
+    atomStyle() {
+        if (!this.props.enabled) {
+            return "Atom Atom-disabled"
+        }
+
         if (this.state.healthChecking) {
-            return "icon-atom atom-check"
+            return "Atom"
         }
         if (this.state.error != null) {
-            return "icon-atom atom-error"
+            return "Atom Atom-error"
         }
-        return "icon-atom atom-ready"
+
+        if (this.state.data?.framework === "java") {
+            return "Atom Atom-java"
+        } else if (this.state.data?.framework === "node") {
+            return "Atom Atom-node"
+        } else if (this.state.data?.framework === "golang") {
+            return "Atom Atom-golang"
+        } else {
+            return "Atom Atom"
+        }
     }
 
     render() {
-        return (<div className="Atom">
+        return (<div className={this.atomStyle()}>
             <div className="element">{this.props.element}</div>
             <div className="symbol"> {this.state.data?.atom?.symbol ?? "Vd"}</div>
             <div className="name">{this.state.data?.atom?.name ?? "Voidnullium"}</div>
             <div className="icon-language">{this.framework()}</div>
-            <div className={this.atomCheck()}><AtomVariant className="colorError" fontSize="inherit"/></div>
+            <div className="icon-atom"><AtomVariant className="colorError" fontSize="inherit"/></div>
         </div>)
     }
 }

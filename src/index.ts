@@ -8,19 +8,50 @@ import Tracer from "./telemetry";
 import express, {response} from "express";
 // rest of the code remains same
 
+import fs from "fs";
+
 let span = Tracer.startSpan("xx");
+let indexHtml: string
 
 const app = express();
 const elements = Config.getElements();
 
-app.use(express.static(path.join(__dirname, '../web/build')));
+function setMetaTag(doc:string, name:string, content:string) :string {
+    let ix = doc.indexOf(name)
+    if (ix < 0) {
+        throw Error("Didn't find "+name)
+    }
+    let cx = doc.indexOf("content=\"",ix)+9
+    let ex = doc.indexOf("\"",cx)
+    return doc.substring(0,cx) + content + doc.substring(ex, doc.length)
+}
+
+
+fs.readFile(path.join(__dirname, '../web/build', 'index.html'),
+    function (err, data) {
+        if (err) {
+            throw err;
+        }
+        let content = data.toString();
+        content = setMetaTag(content, "treactor-max-number", Config.MAX_NUMBER.toString())
+        content = setMetaTag(content, "treactor-max-bond", Config.MAX_BOND.toString())
+        content = setMetaTag(content, "treactor-mode", "cluster")
+        content = setMetaTag(content, "treactor-otel-url", "")
+        content = setMetaTag(content, "treactor-api-url", "")
+        indexHtml = content
+    });
+
 
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
+    //   res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
+    res.send(indexHtml)
 });
-app.get('/ui', function (req, res) {
-    res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
-});
+
+app.use(express.static(path.join(__dirname, '../web/build')));
+
+// app.get('/ui', function (req, res) {
+//     res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
+// });
 
 app.get('/treact/about/:number', function (req, res) {
 
@@ -89,7 +120,7 @@ function extractHeadersFromResponse(res: AxiosResponse): { [k: string]: any } {
     return headers;
 }
 
-app.get('/treact/atom/:atom',  function (req, res) {
+app.get('/treact/atom/:atom', function (req, res) {
     let atom = elements.bySumbol(req.params["atom"])
     if (undefined === atom) {
         return;

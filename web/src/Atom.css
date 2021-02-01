@@ -5,6 +5,36 @@
     position: relative;
 }
 
+.Atom-golang {
+    background-color: #6ed9f3;
+}
+
+.Atom-node {
+    background-color: #abffb7;
+}
+
+.Atom-python {
+    background-color: #fff691;
+}
+
+.Atom-java {
+    background-color: #ffd3ba;
+}
+
+.Atom-error {
+    background-color: #B30000;
+    color: white;
+}
+
+.Atom-unhealthy {
+    background-color: darkslategray;
+    color: white;
+}
+
+.Atom-disabled {
+    background-color: lightgray;
+}
+
 .element {
     font-size: 10pt;
     text-align: left;
@@ -46,16 +76,4 @@
     top: 27px;
     right: 9px;
     margin: -9px;
-}
-
-.atom-check {
-    color: darkblue;
-}
-
-.atom-ready {
-    color: black;
-}
-
-.atom-error {
-    color: darkred;
 }

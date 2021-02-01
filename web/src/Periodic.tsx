@@ -1,10 +1,27 @@
 import {Component} from 'react';
 import Atom from "./Atom";
 
-class Periodic extends Component {
+type PeriodicProps = {
+}
+
+
+class Periodic extends Component<PeriodicProps> {
 
     private static ari1: number[] = [1, 3, 11, 19, 37, 55, 87, 58, 90];
     private static ari2: number[] = [2, 5, 13, 22, 40, 72, 104];
+
+    private readonly maxNumber:number
+    private readonly maxBound:number
+
+    constructor(props:PeriodicProps) {
+        super(props);
+        // @ts-ignore
+        this.maxNumber = document.querySelectorAll('[name="treactor-max-number"]')[0].content
+        // @ts-ignore
+        this.maxBound = document.querySelectorAll('[name="treactor-max-number"]')[0].content
+    }
+
+
 
     createPeriod(row: number) {
         let children = []
@@ -15,7 +32,7 @@ class Periodic extends Component {
                 ((row >= 2) && (i <= 2)) ||
                 ((row >= 4) && (i <= 3))
             ) {
-                children.push(<td><Atom element={element++} healthInterval={0}/></td>)
+                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/></td>)
             } else {
                 children.push(<td></td>)
             }
@@ -28,7 +45,7 @@ class Periodic extends Component {
                 ((row >= 2) && (i >= 13)) ||
                 ((row >= 4) && (i >= 4))
             ) {
-                children.push(<td><Atom element={element++} healthInterval={0}/></td>)
+                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/></td>)
             } else {
                 children.push(<td></td>)
             }
@@ -36,7 +53,7 @@ class Periodic extends Component {
         return children
     }
 
-    createExtraRow = function (row: number) {
+    createExtraRow (row: number) {
         let children = []
         for (let i = 1; i <= 3; i++) {
             children.push(<td></td>)
@@ -44,13 +61,13 @@ class Periodic extends Component {
         children.push(<td></td>)
         let element = Periodic.ari1[row - 1]
         for (let i = 4; i <= 17; i++) {
-            children.push(<td><Atom element={element++} healthInterval={0}/></td>)
+            children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/></td>)
         }
         children.push(<td></td>)
         return children
     }
 
-    table = () => {
+    table() {
         let table = []
         for (let i = 1; i <= 7; i++) {
             table.push(<tr>{this.createPeriod(i)}</tr>)

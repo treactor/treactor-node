@@ -26,7 +26,7 @@ class Configuration {
     public MODULE = process.env.TREACTOR_MODULE || "treactor"
     public COMPONENT = process.env.TREACTOR_COMPONENT || "app"
     public MAX_BOND = parseInt(process.env.TREACTOR_MAX_BOND || "5")
-    public MAX_NUMBER = parseInt(process.env.TREACTOR_MAX_NUMBER || "103")
+    public MAX_NUMBER = parseInt(process.env.TREACTOR_MAX_NUMBER || "118")
 
     private readonly _mode
 
