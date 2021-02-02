@@ -52,28 +52,28 @@ class Configuration {
     }
 
     aboutUrl(n: number) {
-        return `${this.aboutHost(n)}/treact/about/${n}?execute=1`;
+        return `${this.aboutHost(n)}/treact/nodes/${n}/info?execute=1`;
     }
 
     atomUrl(molecule: string) {
-        return `${this.atomHostFromSymbol(molecule)}/treact/atom/${molecule.toLowerCase()}?symbol=${molecule}&execute=1`
+        return `${this.atomHostFromSymbol(molecule)}/treact/atoms/${molecule.toLowerCase()}?symbol=${molecule}&execute=1`
     }
 
     moleculeUrl(molecule: string) {
         if (this._mode == Mode.Cluster) {
             if (this.MODULE == "bond") {
                 if (this.COMPONENT == "n") {
-                    return `http://bond-n/treact/bond/n?molecule=${molecule}&execute=1`
+                    return `http://bond-n/treact/bonds/n?molecule=${molecule}&execute=1`
                 }
                 let next = parseInt(this.COMPONENT) + 1
                 if(next > this.MAX_BOND) {
-                    return `http://bond-n/treact/bond/n?molecule=${molecule}&execute=1`
+                    return `http://bond-n/treact/bonds/n?molecule=${molecule}&execute=1`
                 }
-                return `http://bond-${next}/treact/bond/${next}?molecule=${molecule}&execute=1`
+                return `http://bond-${next}/treact/bonds/${next}?molecule=${molecule}&execute=1`
             }
-            return `http://bond-1/treact/bond/1?molecule=${molecule}&execute=1`
+            return `http://bond-1/treact/bonds/1?molecule=${molecule}&execute=1`
         } else {
-            return `http://localhost:${this.PORT}/treact/bond/n?molecule=${molecule}&execute=1`
+            return `http://localhost:${this.PORT}/treact/bonds/n?molecule=${molecule}&execute=1`
         }
     }
 

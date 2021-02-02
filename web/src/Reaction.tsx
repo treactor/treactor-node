@@ -35,7 +35,7 @@ class Reaction extends Component<ReactorProps, ReactorState> {
     }
 
     private startReaction = () => {
-        fetch("/treact/reaction?molecule=" + this.state.molecule)
+        fetch("/treact/reactions?molecule=" + this.state.molecule)
             .then(response => response.json())
             .then((data) => {
                     this.setState({

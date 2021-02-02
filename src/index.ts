@@ -53,7 +53,17 @@ app.use(express.static(path.join(__dirname, '../web/build')));
 //     res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
 // });
 
-app.get('/treact/about/:number', function (req, res) {
+app.get('/treact/nodes/:number/health', function (req, res) {
+    res.status(200)
+    res.send("")
+})
+
+app.get('/healthz', function (req, res) {
+    res.status(200)
+    res.send("")
+})
+
+app.get('/treact/nodes/:number/info', function (req, res) {
 
     let n = parseInt(req.params["number"])
     if (undefined === n) {
@@ -102,7 +112,6 @@ app.get('/treact/about/:number', function (req, res) {
     }
 });
 
-
 function extractHeaders(req: IncomingMessage): { [k: string]: any } {
     let headers: { [k: string]: any } = {};
     for (let i = 0; i < req.rawHeaders.length; i++) {
@@ -120,7 +129,7 @@ function extractHeadersFromResponse(res: AxiosResponse): { [k: string]: any } {
     return headers;
 }
 
-app.get('/treact/atom/:atom', function (req, res) {
+app.get('/treact/atoms/:atom', function (req, res) {
     let atom = elements.bySumbol(req.params["atom"])
     if (undefined === atom) {
         return;
@@ -166,7 +175,7 @@ app.get('/treact/atom/:atom', function (req, res) {
 
 });
 
-app.get('/treact/bond/:b', function (req, res) {
+app.get('/treact/bonds/:b', function (req, res) {
     let request: TReactorRequest = {
         path: req.originalUrl,
         headers: extractHeaders(req)
@@ -182,7 +191,7 @@ app.get('/treact/bond/:b', function (req, res) {
     res.send(node)
 });
 
-app.get('/treact/reaction', function (req, res) {
+app.get('/treact/reactions', function (req, res) {
     let request: TReactorRequest = {
         path: req.originalUrl,
         headers: extractHeaders(req)
@@ -231,7 +240,7 @@ app.get('/treact/reaction', function (req, res) {
                     node: result.data
                 }
                 node.bonds.push(bond)
-                res.send(bond)
+                res.send(node)
             }
         ).catch(
             function (result) {

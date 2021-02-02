@@ -78,7 +78,7 @@ class Atom extends Component<AtomProps, AtomState> {
             healthChecking: true,
             error: null
         })
-        fetch(this.apiUrl + "/treact/about/" + this.props.element, {
+        fetch(this.apiUrl + "/treact/nodes/" + this.props.element + "/info", {
             headers: {
                 'Accept': 'application/json',
             }
