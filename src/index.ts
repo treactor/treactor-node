@@ -99,7 +99,7 @@ app.get('/treact/nodes/:number/info', function (req, res) {
         }
         res.send(node)
     } else {
-        axios.get(Config.aboutUrl(n)).then(
+        axios.get(Config.nodeUrl(n)).then(
             function (response) {
                 res.send(response.data)
             }

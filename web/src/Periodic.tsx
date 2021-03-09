@@ -1,8 +1,7 @@
 import {Component} from 'react';
 import Atom from "./Atom";
 
-type PeriodicProps = {
-}
+type PeriodicProps = {}
 
 
 class Periodic extends Component<PeriodicProps> {
@@ -10,17 +9,16 @@ class Periodic extends Component<PeriodicProps> {
     private static ari1: number[] = [1, 3, 11, 19, 37, 55, 87, 58, 90];
     private static ari2: number[] = [2, 5, 13, 22, 40, 72, 104];
 
-    private readonly maxNumber:number
-    private readonly maxBound:number
+    private readonly maxNumber: number
+    private readonly maxBound: number
 
-    constructor(props:PeriodicProps) {
+    constructor(props: PeriodicProps) {
         super(props);
         // @ts-ignore
         this.maxNumber = document.querySelectorAll('[name="treactor-max-number"]')[0].content
         // @ts-ignore
         this.maxBound = document.querySelectorAll('[name="treactor-max-number"]')[0].content
     }
-
 
 
     createPeriod(row: number) {
@@ -32,7 +30,8 @@ class Periodic extends Component<PeriodicProps> {
                 ((row >= 2) && (i <= 2)) ||
                 ((row >= 4) && (i <= 3))
             ) {
-                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/></td>)
+                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/>
+                </td>)
             } else {
                 children.push(<td></td>)
             }
@@ -45,15 +44,34 @@ class Periodic extends Component<PeriodicProps> {
                 ((row >= 2) && (i >= 13)) ||
                 ((row >= 4) && (i >= 4))
             ) {
-                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/></td>)
+                children.push(<td><Atom enabled={element <= this.maxNumber} element={element++} healthInterval={0}/>
+                </td>)
             } else {
-                children.push(<td></td>)
+                if (row === 2 && i === 4) {
+                    children.push(<td><Atom enabled={true} element={500} healthInterval={0}/></td>)
+                } else if (row === 2 && i === 5) {
+                    children.push(<td><Atom enabled={true} element={501} healthInterval={0}/></td>)
+                } else if (row === 1) {
+                    let n = i - 3
+                    let max = this.maxBound > 5 ? 5 : this.maxBound
+                    if (n <= max) {
+                        children.push(<td><Atom enabled={true} element={200+n} healthInterval={0}/></td>)
+                    }
+                    else if (n === max+1) {
+                        children.push(<td><Atom enabled={true} element={299} healthInterval={0}/></td>)
+                    }
+                    else {
+                        children.push(<td></td>)
+                    }
+                } else {
+                    children.push(<td></td>)
+                }
             }
         }
         return children
     }
 
-    createExtraRow (row: number) {
+    createExtraRow(row: number) {
         let children = []
         for (let i = 1; i <= 3; i++) {
             children.push(<td></td>)

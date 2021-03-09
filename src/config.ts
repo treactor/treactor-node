@@ -51,8 +51,8 @@ class Configuration {
         return false;
     }
 
-    aboutUrl(n: number) {
-        return `${this.aboutHost(n)}/treact/nodes/${n}/info?execute=1`;
+    nodeUrl(n: number) {
+        return `${this.nodeHost(n)}/treact/nodes/${n}/info?execute=1`;
     }
 
     atomUrl(molecule: string) {
@@ -77,11 +77,25 @@ class Configuration {
         }
     }
 
-    private aboutHost(n: number) {
+    private nodeHost(n: number) {
         if (this._mode == Mode.Cluster) {
-            let atom = this.elements.byNumber(n);
-            // @ts-ignore
-            return `http://atom-${atom.symbol.toLowerCase()}`
+            if(n == 500) {
+                return "http://treactor-ui"
+            }
+            if(n == 501) {
+                return "http://treactor-api"
+            }
+            if(n >= 201 && n < 201 + this.MAX_BOND) {
+                return `http://bond-${n-200}`
+            }
+            if(n === 201 + this.MAX_BOND) {
+                return "http://bond-n"
+            }
+            let node = this.elements.byNumber(n);
+            if (node === undefined) {
+                throw Error("Unknown Atom")
+            }
+            return `http://atom-${node.symbol.toLowerCase()}`
         } else {
             return `http://localhost:${this.PORT}`
         }

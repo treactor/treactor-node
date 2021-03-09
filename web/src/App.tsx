@@ -3,6 +3,48 @@ import React, {Component} from 'react';
 import './App.css';
 import Periodic from "./Periodic";
 import Reaction from "./Reaction";
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
+import { WebTracerProvider } from '@opentelemetry/web';
+import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
+import { CollectorTraceExporter } from '@opentelemetry/exporter-collector';
+import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load';
+import { HttpTraceContext } from '@opentelemetry/core';
+import { UserInteractionInstrumentation } from "@opentelemetry/instrumentation-user-interaction";
+import { Resource } from "@opentelemetry/resources";
+
+/* eslint-disable */
+let resource = new Resource({
+    "service.name": "treactor-web",
+    "service.version": "dev",
+    "telemetry.sdk.name": "opentelemetry",
+    "telemetry.sdk.language": "webjs",
+    "telemetry.sdk.version": "0.14.0"
+});
+
+export const traceProvider = new WebTracerProvider({
+    resource: resource,
+});
+
+traceProvider.addSpanProcessor(
+    new SimpleSpanProcessor(new CollectorTraceExporter({
+        url: "/v1/trace"
+    }))
+);
+
+const fetchInstrumentation = new FetchInstrumentation();
+const documentLoadInstrumentation = new DocumentLoadInstrumentation();
+const userInteractionIInstrumentation = new UserInteractionInstrumentation();
+traceProvider.register({
+    contextManager: new ZoneContextManager(),
+    propagator: new HttpTraceContext()
+});
+fetchInstrumentation.setTracerProvider(traceProvider);
+documentLoadInstrumentation.setTracerProvider(traceProvider);
+userInteractionIInstrumentation.setTracerProvider(traceProvider);
+
+export const tracer = traceProvider.getTracer("treactor-web");
+
 
 type AppProps = {
 }

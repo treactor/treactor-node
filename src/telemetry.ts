@@ -3,21 +3,10 @@ import {NodeTracerProvider} from "@opentelemetry/node"
 import {SimpleSpanProcessor} from "@opentelemetry/tracing"
 import {Config} from "./config";
 import {CollectorTraceExporter} from '@opentelemetry/exporter-collector-grpc';
+const {HttpInstrumentation} = require('@opentelemetry/instrumentation-http');
+const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-express');
 
-const provider = new NodeTracerProvider(
-    {
-        plugins: {
-            // express: {
-            //     enabled: true,
-            //     path: '@opentelemetry/plugin-express',
-            // },
-            http: {
-                enabled: true,
-                path: '@opentelemetry/plugin-http',
-            },
-        }
-    }
-);
+const traceProvider = new NodeTracerProvider({});
 
 const collectorOptions = {
     serviceName: Config.SERVICE_NAME,
@@ -26,8 +15,13 @@ const collectorOptions = {
 };
 const exporter = new CollectorTraceExporter(collectorOptions);
 
-provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-// Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
-provider.register();
+traceProvider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+
+const expressInstrumentation = new ExpressInstrumentation();
+const httpInstrumentation = new HttpInstrumentation({});
+traceProvider.register();
+httpInstrumentation.enable();
+httpInstrumentation.setTracerProvider(traceProvider);
+expressInstrumentation.setTracerProvider(traceProvider);
 
 export default opentelemetry.trace.getTracer('treactor-node');
