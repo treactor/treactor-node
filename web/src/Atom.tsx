@@ -5,6 +5,9 @@ import LanguageJavascript from 'mdi-material-ui/LanguageJavascript'
 import LanguageJava from 'mdi-material-ui/LanguageJava'
 import LanguageGo from 'mdi-material-ui/LanguageGo'
 import GoogleChrome from 'mdi-material-ui/GoogleChrome'
+import {tracer} from "./modules/telemetry/telemetry";
+import {context, getSpan, setSpan} from '@opentelemetry/api';
+import {Context} from "@opentelemetry/api/build/src/context/types";
 
 type AtomProps = {
     enabled: boolean
@@ -50,24 +53,30 @@ class Atom extends Component<AtomProps, AtomState> {
 
     //timerHandler:TimerHandler = null
 
-    refreshTime() {
+    endPlusRefresh() {
+        const span = getSpan(context.active())
         if (this.timerHandler !== 0) {
+            span?.addEvent("TimeHandler was not null, reset timer")
             clearTimeout(this.timerHandler)
         }
         if (this.props.enabled) {
+            span?.addEvent("Resetting refresh")
+            span?.end()
             // @ts-ignore
             this.timerHandler = setTimeout(() => this.getData(), 30000 + Math.random() * 30000)
         }
     }
 
 
-    handleError(res: Response): Response {
-        this.refreshTime()
+    throwOnError(res: Response): Response {
+        const span = getSpan(context.active())
         if (!res.ok) {
+            span?.addEvent("Response gave error, throwing error")
             this.setState({
                 error: res,
                 healthChecking: false
             })
+            this.endPlusRefresh()
             throw Error()
         }
         return res
@@ -78,28 +87,36 @@ class Atom extends Component<AtomProps, AtomState> {
             healthChecking: true,
             error: null
         })
-        fetch(this.apiUrl + "/treact/nodes/" + this.props.element + "/info", {
-            headers: {
-                'Accept': 'application/json',
-            }
+        const span = tracer.startSpan("Fetch Node Info", {
+            root: true
         })
-            .then(res => this.handleError(res))
-            .then(res => res.json() as Promise<AboutResult>)
-            .then((result) => {
-                    this.setState({
-                        data: result,
-                        error: null,
-                        healthChecking: false
-                    })
-                },
-                (error) => {
-                    this.refreshTime()
-                    this.setState({
-                        error: error,
-                        healthChecking: false
-                    })
+        context.with(setSpan(context.active(), span), () => {
+            fetch(this.apiUrl + "/treact/nodes/" + this.props.element + "/info", {
+                headers: {
+                    'Accept': 'application/json',
                 }
-            )
+            })
+                .then(res => this.throwOnError(res))
+                .then(res => res.json() as Promise<AboutResult>)
+                .then((result) => {
+                        this.setState({
+                            data: result,
+                            error: null,
+                            healthChecking: false
+                        })
+                        this.endPlusRefresh()
+                    },
+                    (error) => {
+                        const span = getSpan(context.active())
+                        span?.addEvent("Received error")
+                        this.setState({
+                            error: error,
+                            healthChecking: false
+                        })
+                        this.endPlusRefresh()
+                    }
+                )
+        })
     }
 
     componentDidMount() {

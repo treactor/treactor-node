@@ -24,4 +24,4 @@ httpInstrumentation.enable();
 httpInstrumentation.setTracerProvider(traceProvider);
 expressInstrumentation.setTracerProvider(traceProvider);
 
-export default opentelemetry.trace.getTracer('treactor-node');
+export default opentelemetry.trace.getTracer('io.treactor.tracing.node', "0.5");

@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {Button, MenuItem, Select, TextField, Grid} from "@material-ui/core";
 import JSONPretty from 'react-json-pretty';
 import './Reaction.css';
+import {tracer} from "./modules/telemetry/telemetry";
+import {context, getSpan, setSpan} from "@opentelemetry/api";
 
 
 type ReactorProps = {}
@@ -35,21 +37,30 @@ class Reaction extends Component<ReactorProps, ReactorState> {
     }
 
     private startReaction = () => {
-        fetch("/treact/reactions?molecule=" + this.state.molecule)
-            .then(response => response.json())
-            .then((data) => {
-                    this.setState({
-                        data: data
-                    })
-                },
-                (error) => {
-                    console.log(error)
-                    // this.setState({
-                    //     data: this.state.error,
-                    //     error: error
-                    // })
-                }
-            )
+        const span = tracer.startSpan("Telemetry Reaction of Molecule " + this.state.molecule, {
+            root: true
+        })
+        context.with(setSpan(context.active(), span), () => {
+            fetch("/treact/reactions?molecule=" + this.state.molecule)
+                .then(response => response.json())
+                .then((data) => {
+                        const span = getSpan(context.active())
+                        this.setState({
+                            data: data
+                        })
+                        span?.end()
+                    },
+                    (error) => {
+                        const span = getSpan(context.active())
+                        console.log(error)
+                        span?.end()
+                        // this.setState({
+                        //     data: this.state.error,
+                        //     error: error
+                        // })
+                    }
+                )
+        })
     }
 
     // private startReaction() {
